@@ -1,0 +1,203 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Narrow:ital,wght@0,400..700;1,400..700&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Archivo Narrow", sans-serif;
+}
+
+:root {
+    --border-color: #8a00c4;
+    --brand-green: #48bb78;
+    --text: #333;
+    --text-white: #f8fafc;
+}
+
+
+header{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 50px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1{
+    font-size: 30px;
+    color: #333;
+    background-color: #fff;
+}
+
+main{
+    background-color: var(--text-white);
+    height: 100%;
+    display: flex;
+    gap: 100px;
+}
+
+#map {
+    flex: 1;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    z-index: 1;
+    margin-top: 30px;
+    width: 1300px;
+    height: 600px;
+    border: var(--border-color) solid 1px;
+}
+
+.info-gerais{
+    display: flex;
+    width: 1300px;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    font-size: 22px;
+}
+
+.valores{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.valores-temperatura, .valores-precipitacao, .valores-vento, .valores-umidade-ar{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #fff;
+    padding: 20px;
+    padding-inline: 0px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    width: 20%;
+    border: 1px solid var(--border-color);
+    color: var(--border-color);
+    font-size: 20px;
+}
+
+.valores-precipitacao i, .valores-temperatura i, .valores-vento i, .valores-umidade-ar i{
+    margin-top: 10px;
+    font-size: 30px;
+}
+
+.valores-temperatura-label, .valores-vento-label, .valores-precipitacao-label, .valores-umidade-ar-label{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.valores-temperatura-label > :first-child, .valores-vento-label > :first-child, .valores-precipitacao-label > :first-child, .valores-umidade-ar-label > :first-child{   
+    font-size: 20px;
+    color: var(--text-main);
+    width: 130px;
+}
+
+.mapa-e-informacoes-gerais{
+    padding-top: 5px;
+    margin-left: 30px;
+    padding-bottom: 1px;
+}
+
+#container-cards {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 30px;
+    max-height: 750px;
+    overflow-y: auto;
+}
+
+#container-cards h3{
+    display: flex;
+    justify-content: center;
+}
+
+.localizacao-card {
+    background: var(--text-white);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.localizacao-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    background-color: var(--border-color);
+    color: #f8fafc;
+}
+
+.localizacao-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.localizacao-nome {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-main);
+}
+
+.clima-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    font-size: 0.85rem;
+}
+
+.clima-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+    background: #fff;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.localizacao-card:hover .clima-item{
+    border: 1px solid #edf2f7;
+    background-color: transparent;
+}
+
+.clima-item span{
+    margin: 0;
+    padding: 0;
+}
+
+.clima-label {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+.clima-value {
+    font-weight: 600;
+    color: var(--text-main);
+    margin-top: 2px;
+}
+
+
+.custom-marker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-marker i {
+    font-size: 30px;
+    text-shadow: 0px 2px 5px rgba(0,0,0,0.3);
+    color: var(--border-color);
+}
