@@ -1,15 +1,17 @@
 const localizacoes = [
-    { id: 1, nome: "Shopping Center Norte", lat: -23.515825, lon: -46.616413 },
-    { id: 2, nome: "Shopping Metro Tucuruvi", lat: -23.480308, lon: -46.602511},
-    { id: 3, nome: "Shopping Aricanduva", lat: -23.564331, lon: -46.503986 },
-    { id: 4, nome: "Shopping Interlagos", lat: -23.674497, lon: -46.678274 },
-    { id: 5, nome: "Shopping Metro Tatuapé", lat: -23.541209, lon: -46.577364},
-    { id: 6, nome: "Shopping Bourbon", lat: -23.525671, lon: -46.681057},
-    { id: 7, nome: "Shopping Cidade São Paulo", lat: -23.564240, lon: -46.653020},
-    { id: 8, nome: "Shopping Pátio Higienópolis", lat: -23.542775, lon: -46.658146},
-    { id: 9, nome: "Shopping Eldorado", lat: -23.571682, lon: -46.696190 },
-    { id: 10, nome: "Shopping Villa Lobos", lat: -23.551912, lon: -46.722544}
+    { id: 1, nome: "Shopping Center Norte", lat: -23.515825, lon: -46.616413, vegetacao: Math.round(Math.random()*25)+1, status: '' },
+    { id: 2, nome: "Shopping Metro Tucuruvi", lat: -23.480308, lon: -46.602511, vegetacao: Math.round(Math.random()*25)+1, status: '' },
+    { id: 3, nome: "Shopping Aricanduva", lat: -23.564331, lon: -46.503986, vegetacao: Math.round(Math.random()*25)+1, status: ''  },
+    { id: 4, nome: "Shopping Interlagos", lat: -23.674497, lon: -46.678274, vegetacao: Math.round(Math.random()*25)+1, status: ''  },
+    { id: 5, nome: "Shopping Metro Tatuapé", lat: -23.541209, lon: -46.577364, vegetacao: Math.round(Math.random()*25)+1, status: '' },
+    { id: 6, nome: "Shopping Bourbon", lat: -23.525671, lon: -46.681057, vegetacao: Math.round(Math.random()*25)+1, status: '' },
+    { id: 7, nome: "Shopping Cidade São Paulo", lat: -23.564240, lon: -46.653020, vegetacao: Math.round(Math.random()*25)+1, status: '' },
+    { id: 8, nome: "Shopping Pátio Higienópolis", lat: -23.542775, lon: -46.658146, vegetacao: Math.round(Math.random()*25)+1, status: '' },
+    { id: 9, nome: "Shopping Eldorado", lat: -23.571682, lon: -46.696190, vegetacao: Math.round(Math.random()*25)+1, status: ''  },
+    { id: 10, nome: "Shopping Villa Lobos", lat: -23.551912, lon: -46.722544, vegetacao: Math.round(Math.random()*25)+1, status: '' }
 ];
+
+const btn = document.querySelector('#btn-aleatorio')
 
 const map = L.map('map').setView([-23.542089, -46.634757], 11);
 
@@ -19,8 +21,77 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const mapMarkers = {};
 
+btn.addEventListener('click', ()=>{
+    for(let i = 0; i<localizacoes.length; i++){
+        let crescimento = Math.round(Math.random()*7)+1
+        localizacoes[i].vegetacao+= crescimento
+    }
+    const container = document.getElementById('container-cards');
+    if(container){
+        container.innerHTML="<h3>Unidades em foco</h3>"
+    }
+    pegandoApiMeteorologica()
+})
+
+
+const definindoStatus = (posicao) =>{
+    const altura = localizacoes[posicao].vegetacao
+    if(altura<15){
+        localizacoes[posicao].status = 'Normal'
+        return
+    }
+    if(altura<25){
+        localizacoes[posicao].status = 'Atenção'
+        return
+    }
+    localizacoes[posicao].status = 'Crítico'
+}
+
+const corStatus  = (status)=>{
+    let cor
+    if(status === 'Normal'){
+        cor = '#2ecc71'
+        return cor
+    }
+    if(status === 'Atenção'){
+        cor = '#ba8e23'
+        return cor
+    }
+    cor ='#e74c3c'
+    return cor
+}
+
+const acaoRecomendada = (status)=>{
+    let acao
+    if(status === 'Normal'){
+        acao = 'Continuar monitorando'
+        return acao
+    }
+    if(status === 'Atenção'){
+        acao = 'Cortar a grama'
+        return acao
+    }
+    acao ='Cortar a grama IMEDIATAMANTE'
+    return acao
+}
+
+const iconeEscolhido = (status, cor)=>{
+    let icone
+    if(status === 'Normal'){
+        icone = `<i class="fa-solid fa-eye" style="color:${cor}"></i>`
+        return icone
+    }
+    if(status === 'Atenção'){
+        icone = `<i class="fa-solid fa-scissors" style="color:${cor}"></i>`
+        return icone
+    }
+    icone =`<i class="fa-solid fa-triangle-exclamation" style="color:${cor}"></i>`
+    return icone
+}
+
 async function pegandoApiMeteorologica() {
     const container = document.getElementById('container-cards');
+    container.innerHTML="<h3>Unidades em foco</h3>"
 
     let totalTemperatura = 0;
     let totalVento = 0;
@@ -37,6 +108,11 @@ async function pegandoApiMeteorologica() {
             const umidade = informacoesClima.relative_humidity_2m;
             const vento = informacoesClima.wind_speed_10m;
             const chuva = informacoesClima.precipitation;
+
+            definindoStatus(i)
+            const cor = corStatus(localizacoes[i].status)
+            const acao = acaoRecomendada(localizacoes[i].status)
+            const icone = iconeEscolhido(localizacoes[i].status, cor)
             
             const card = document.createElement('div');
             card.className = 'localizacao-card';
@@ -61,6 +137,11 @@ async function pegandoApiMeteorologica() {
                         <i class="fa-solid fa-cloud-showers-heavy"></i>
                         <span class="clima-value">${chuva} mm</span>
                     </div>
+                </div>
+                <div class="vegetacao">
+                    <p> <i class="fa-solid fa-ruler-vertical"></i> Altura da vegetação: ${localizacoes[i].vegetacao} cm</p>
+                    <p style="color:${cor}"> <i class="fa-solid fa-circle"></i> Status: ${localizacoes[i].status}</p>
+                    <p> ${icone} Ação recomendada: ${acao}</p>
                 </div>
             `;
 

@@ -8,7 +8,7 @@
 }
 
 :root {
-    --border-color: #8a00c4;
+    --border-color: rgb(94, 34, 243);
     --brand-green: #48bb78;
     --text: #333;
     --text-white: #f8fafc;
@@ -28,6 +28,23 @@ header h1{
     font-size: 30px;
     color: #333;
     background-color: #fff;
+}
+
+#btn-aleatorio{
+    border:1px solid var(--border-color);
+    background-color: transparent;
+    position: absolute;
+    right: 100px;
+    font-size: 22px;
+    padding: 10px;
+    border-radius: 6px;
+    transition: 0.2s ease-in;
+}
+
+#btn-aleatorio:hover{
+    background-color: var(--border-color);
+    cursor: pointer;
+    color: #edf2f7;
 }
 
 main{
@@ -128,6 +145,7 @@ main{
     padding: 15px;
     transition: transform 0.2s, box-shadow 0.2s;
     cursor: pointer;
+    width: 400px;
 }
 
 .localizacao-card:hover {
@@ -168,7 +186,19 @@ main{
     border: 1px solid var(--border-color);
 }
 
-.localizacao-card:hover .clima-item{
+.vegetacao{
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    text-align: justify;
+    gap: 4px;
+    padding-inline: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding-block: 5px;
+}
+
+.localizacao-card:hover .clima-item, .localizacao-card:hover .vegetacao{
     border: 1px solid #edf2f7;
     background-color: transparent;
 }
