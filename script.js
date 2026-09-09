@@ -22,10 +22,10 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const mapMarkers = {};
 
 btn.addEventListener('click', ()=>{
-    for(let i = 0; i<localizacoes.length; i++){
-        let crescimento = Math.round(Math.random()*7)+1
-        localizacoes[i].vegetacao+= crescimento
-    }
+    localizacoes.forEach((localizacao) => {
+        let crescimento = Math.round(Math.random() * 7) + 1;
+        localizacao.vegetacao += crescimento;
+    });
     const container = document.getElementById('container-cards');
     if(container){
         container.innerHTML="<h3>Unidades em foco</h3>"
