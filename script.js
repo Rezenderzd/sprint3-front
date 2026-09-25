@@ -9,24 +9,28 @@ const localizacoes = [
     { id: 8, nome: "Shopping Pátio Higienópolis", lat: -23.542775, lon: -46.658146, vegetacao: Math.round(Math.random()*25)+1, status: '' },
     { id: 9, nome: "Shopping Eldorado", lat: -23.571682, lon: -46.696190, vegetacao: Math.round(Math.random()*25)+1, status: ''  },
     { id: 10, nome: "Shopping Villa Lobos", lat: -23.551912, lon: -46.722544, vegetacao: Math.round(Math.random()*25)+1, status: '' }
-];
+]
+
+const ordenandoLocalizacoes = ()=>{
+    localizacoes.sort((a, b) => b.vegetacao - a.vegetacao)
+}
 
 const btn = document.querySelector('#btn-aleatorio')
 
-const map = L.map('map').setView([-23.542089, -46.634757], 11);
+const map = L.map('map').setView([-23.542089, -46.634757], 11)
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+}).addTo(map)
 
 const mapMarkers = {};
 
 btn.addEventListener('click', ()=>{
     localizacoes.forEach((localizacao) => {
-        let crescimento = Math.round(Math.random() * 7) + 1;
-        localizacao.vegetacao += crescimento;
-    });
-    const container = document.getElementById('container-cards');
+        let crescimento = Math.round(Math.random() * 7) + 1
+        localizacao.vegetacao += crescimento
+    })
+    const container = document.getElementById('container-cards')
     if(container){
         container.innerHTML="<h3>Unidades em foco</h3>"
     }
@@ -90,32 +94,34 @@ const iconeEscolhido = (status, cor)=>{
 }
 
 async function pegandoApiMeteorologica() {
-    const container = document.getElementById('container-cards');
+    const container = document.getElementById('container-cards')
     container.innerHTML="<h3>Unidades em foco</h3>"
 
-    let totalTemperatura = 0;
-    let totalVento = 0;
-    let totalChuva = 0;
-    let totalUmidade = 0;
+    ordenandoLocalizacoes()
+
+    let totalTemperatura = 0
+    let totalVento = 0
+    let totalChuva = 0
+    let totalUmidade = 0
     
     for (let i = 0; i < localizacoes.length; i++) {
         try {
-            const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${localizacoes[i].lat}&longitude=${localizacoes[i].lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation`);
-            const data = await response.json();
+            const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${localizacoes[i].lat}&longitude=${localizacoes[i].lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation`)
+            const data = await response.json()
             
-            const informacoesClima = data.current;
-            const temperatura = informacoesClima.temperature_2m;
-            const umidade = informacoesClima.relative_humidity_2m;
-            const vento = informacoesClima.wind_speed_10m;
-            const chuva = informacoesClima.precipitation;
+            const informacoesClima = data.current
+            const temperatura = informacoesClima.temperature_2m
+            const umidade = informacoesClima.relative_humidity_2m
+            const vento = informacoesClima.wind_speed_10m
+            const chuva = informacoesClima.precipitation
 
             definindoStatus(i)
             const cor = corStatus(localizacoes[i].status)
             const acao = acaoRecomendada(localizacoes[i].status)
             const icone = iconeEscolhido(localizacoes[i].status, cor)
             
-            const card = document.createElement('div');
-            card.className = 'localizacao-card';
+            const card = document.createElement('div')
+            card.className = 'localizacao-card'
             card.innerHTML = `
                 <div class="localizacao-info-header">
                     <span class="localizacao-nome">${localizacoes[i].nome}</span>
@@ -143,15 +149,15 @@ async function pegandoApiMeteorologica() {
                     <p style="color:${cor}"> <i class="fa-solid fa-circle"></i> Status: ${localizacoes[i].status}</p>
                     <p> ${icone} Ação recomendada: ${acao}</p>
                 </div>
-            `;
+            `
 
             card.addEventListener('click', () => {
-                map.setView([localizacoes[i].lat, localizacoes[i].lon], 11);
-                mapMarkers[localizacoes[i].id].openPopup();
-            });
+                map.setView([localizacoes[i].lat, localizacoes[i].lon], 11)
+                mapMarkers[localizacoes[i].id].openPopup()
+            })
 
             if (container) {
-                container.appendChild(card);
+                container.appendChild(card)
             }
 
             const iconeCustomizado = L.divIcon({
@@ -160,34 +166,34 @@ async function pegandoApiMeteorologica() {
                 iconSize: [30, 42],         
                 iconAnchor: [15, 42],       
                 popupAnchor: [0, -40]      
-            });
+            })
 
             const marker = L.marker([localizacoes[i].lat, localizacoes[i].lon], { icon: iconeCustomizado })
                 .addTo(map)
                 .bindPopup(`
                     <strong>${localizacoes[i].nome}</strong><br>
                     Temp: ${temperatura}°C | Umidade: ${umidade}%<br>  Vento: ${vento} km/h | Chuva: ${chuva} mm
-                `);
+                `)
                     
-            mapMarkers[localizacoes[i].id] = marker;
-            totalTemperatura += temperatura;
-            totalChuva += chuva;
-            totalVento += vento;
-            totalUmidade+= umidade;
+            mapMarkers[localizacoes[i].id] = marker
+            totalTemperatura += temperatura
+            totalChuva += chuva
+            totalVento += vento
+            totalUmidade+= umidade
         } catch (error) {
-            console.error("Falha ao coletar dados para a localidade:", localizacoes[i].nome, error);
+            console.error("Falha ao coletar dados para a localidade:", localizacoes[i].nome, error)
         }
     }
 
-    const mediaTemperatura = totalTemperatura / localizacoes.length;
-    const mediaVento = totalVento / localizacoes.length;
-    const mediaChuva = totalChuva / localizacoes.length;
-    const mediaUmidade = totalUmidade / localizacoes.length;
+    const mediaTemperatura = totalTemperatura / localizacoes.length
+    const mediaVento = totalVento / localizacoes.length
+    const mediaChuva = totalChuva / localizacoes.length
+    const mediaUmidade = totalUmidade / localizacoes.length
 
-    document.querySelector('#temperatura').textContent = `${mediaTemperatura.toFixed(2)} ºC`;
-    document.querySelector('#precipitacao').textContent = `${mediaChuva.toFixed(2)} mm`;
-    document.querySelector('#vento-velocidade').textContent = `${mediaVento.toFixed(2)} km/h`;
-    document.querySelector('#umidade-ar').textContent = `${mediaUmidade.toFixed(2)}%`;
+    document.querySelector('#temperatura').textContent = `${mediaTemperatura.toFixed(2)} ºC`
+    document.querySelector('#precipitacao').textContent = `${mediaChuva.toFixed(2)} mm`
+    document.querySelector('#vento-velocidade').textContent = `${mediaVento.toFixed(2)} km/h`
+    document.querySelector('#umidade-ar').textContent = `${mediaUmidade.toFixed(2)}%`
 }
 
-window.onload = pegandoApiMeteorologica;
+window.onload = pegandoApiMeteorologica
